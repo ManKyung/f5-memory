@@ -3950,5 +3950,14 @@ html {
   box-shadow: 0 0 1px 0 #fff inset;
   /* padding:10px; */
 }
-.piece {
+/* .piece {
+  background: #f7cff7;
+} */
+.piece.on {
+  background: #f7cff7 !important;
+  /* pointer-events: none; */
+}
+.piece.success {
+  /* background: #f7cff7 !important; */
+  pointer-events: none;
 }
