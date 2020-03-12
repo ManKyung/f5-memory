@@ -1,7 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
 import stage from "@/assets/js/stage.js";
-import bgMusic from "@/assets/mp3/background.mp3";
 import clickSound from "@/assets/mp3/click.mp3";
 import success from "@/assets/mp3/success.mp3";
 
@@ -15,7 +14,6 @@ export default new Vuex.Store({
         limitClear: [], // on 시간제한 있는거
         noLimitClear: [], // off 시간제한 없는거
         stage: [],
-        bgMusic: new Audio(bgMusic),
         clickSound: new Audio(clickSound),
         successSound: new Audio(success),
         isSound: true,

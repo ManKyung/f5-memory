@@ -93,10 +93,10 @@
           <div class="pt-8 px-4">
             <v-ons-button
               class="w-100 text-center fo"
-              v-hammer:tap="(e)=> goClose(e, 'cancel')"
-              v-hammer:press="(e)=> goClose(e, 'cancel')"
-              v-hammer:pressup="(e)=> goClose(e, 'cancel')"
-              v-hammer:pan.start="(e)=> goClose(e, 'cancel')"
+              v-hammer:tap="(e)=> goClose(e)"
+              v-hammer:press="(e)=> goClose(e)"
+              v-hammer:pressup="(e)=> goClose(e)"
+              v-hammer:pan.start="(e)=> goClose(e)"
             >NEXT</v-ons-button>
           </div>
         </v-ons-card>
@@ -152,7 +152,7 @@ export default {
     },
     level: {
       type: Number,
-      default: 46
+      default: 1
     }
   },
   name: "play-component",
@@ -211,6 +211,9 @@ export default {
     setGameInit() {
       this.realBoardItems = [];
       this.goTime = 5;
+      if(this.gameLevel > 100) {
+        this.gameLevel = this.gameLevel % 100;
+      }
       this.gameParams = this.$store.state.gameSet.stage[this.gameLevel];
 
       this.time = this.previewTime = this.gameParams.previewTime;
@@ -311,7 +314,7 @@ export default {
       }
       clearInterval(this.setGoTime);
     },
-    goClose(e, title) {
+    goClose(e) {
       if (e.type === "tap" || e.type === "pressup" || e.type === "panstart") {
    
         this.clearVisible = false;
