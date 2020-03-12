@@ -3,9 +3,9 @@ var admob = null;
 // 실제
 // var admobId = {
 //   android: {
-//     banner: 'ca-app-pub-1963334904140891/9684394427',
-//     interstitial: 'ca-app-pub-1963334904140891/5880880785',
-//     rewardvideo: 'ca-app-pub-1963334904140891/5936721106',
+//     banner: 'ca-app-pub-1963334904140891/7413517944',
+//     interstitial: 'ca-app-pub-1963334904140891/4787354606',
+//     rewardvideo: 'ca-app-pub-1963334904140891/9915218899',
 //   },
 //   ios: {
 //     banner: 'ca-app-pub-1963334904140891/9613234519',

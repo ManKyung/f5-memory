@@ -1,106 +1,125 @@
 <template>
   
-  <v-ons-page>
-    <v-ons-toolbar class="white" style="min-height:64px;">
-      <div class="left pl-3 pt-3 fo w-100" style="font-size:32px;">STAGE 1</div>
-      <div class="right pt-2">
-      </div>
-    </v-ons-toolbar>
+  <v-ons-page class="main-page">
 
-    <div
-      class="game-background"
-      :style="`background:url('${backgroundImage}'); `">
-      
-      <div class="pa-5">
-        <div id="board-real">
-          <div
-            v-for="(item, index) in realBoardItems"
-            :key="index"
-            class="piece-wrap"
-            :style="`width: ${pWidth}px; height:${pHeight}px`"
-            v-hammer:tap="(event)=> clickPiece(event, item.id)"
-            v-hammer:pan.start="(event)=> clickPiece(event, item.id)"
-          >
-            <div class="piece on" :style="`${item.style}`">{{index}}</div>
-          </div>
-        </div>
+    <div class="background" :style="`background:url(${backgroundImage});height:100%;`"></div>
+    <div class="content">
+      <div class="content-wrap" :style="`background:url(${logoImage});height:100%; background-size:contain; background-repeat:repeat`">
+        <v-ons-card class="text-center pa-5" style="border:2px solid #333; width:80%; background: #f7cff7">
+          <div class="pt-7 pb-8"><strong class="fs-24">GAME MODE</strong></div>
+          
+          <ons-list-item>
+            <label class="center" for="switch1">
+              TIME LIMIT <span class="ml-1 primary--text">({{ isTimeLimit ? 'on' : 'off' }})</span>
+            </label>
+            <div class="right">
+              <v-ons-switch class="time-switch" input-id="switch1"
+                v-model="isTimeLimit"
+              >
+              </v-ons-switch>
+            </div>
+          </ons-list-item>
+          <v-ons-button class="btn-item fo"
+            v-hammer:tap="(e)=> goPage(e, 'play')"
+            v-hammer:press="(e)=> goPage(e, 'play')"
+            v-hammer:pressup="(e)=> goPage(e, 'play')"
+            v-hammer:pan.start="(e)=> goPage(e, 'play')">PLAY</v-ons-button>
+        </v-ons-card>
       </div>
-
     </div>
 
   </v-ons-page>
 </template>
 
+<style>
+.content-wrap{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+.btn-item {
+  border:2px solid #675bc5 !important;
+  padding: 5px 0px !important;
+  border-radius: 50px !important;
+  margin:20px 0 10px 0 !important;
+  width:48% !important;
+}
+.btn-item:active {
+  transform: translateY(2px);
+  background: #6c5ce7 !important;
+}
+.list-item__center, .list-item__right {
+background-image: none !important;
+}
+:checked + .switch__toggle {
+  box-shadow: inset 0 0 0 2px #6c5ce7 !important;
+  background-color: #6c5ce7 !important;
+}
+</style>
+
 <script>
+import playPage from "@/views/Play"
+import backgroundImage from '@/assets/img/background/background.jpg';
+import logoImage from '@/assets/img/logo.png';
+import { showBanner } from "@/assets/js/admob.js";
 export default {
-  name: 'm',
+  name: 'main-component',
   data(){
     return {
-      backgroundImage: '',
-      row: 4,
-      pWidth: '',
-      pHeight: '',
-      realBoardItems: [],
-      selectPieceNumber: -1,
-      previousDom: null
+      backgroundImage, 
+      logoImage,
+      isTimeLimit: false,
+      stage: this.$store.state.gameSet.stage,
     }
   },
-  created(){
-    this.backgroundImage = require(`../assets/img/background/background.jpg`);
-    this.setBoard();
+  mounted(){
+    setTimeout(() => {
+      showBanner()
+    }, 1000)
   },
   methods: {
-    clickPiece(e, i) {
-      if(this.selectPieceNumber === -1){
-        this.selectPieceNumber = i;
-        this.previousDom = e.target; 
-        this.previousDom.classList.remove('on')
-      } else if(this.selectPieceNumber === i){ // 같은거 클릭시
-        console.log('success')
-        
-          this.previousDom.classList.remove('on')
-          e.target.classList.remove('on')
-          
-          e.target.classList.add('success')
-          this.previousDom.classList.add('success')
-        this.selectPieceNumber = -1
-      } else if(this.selectPieceNumber !== i){ // 다른거 클릭시
-        console.log('fail')
-        this.selectPieceNumber = -1
+    goPage(e, gType){
+      if(e.type === 'tap' || e.type === 'pressup' || e.type === 'panstart'){
+        let params = {};
+        let level = 1;
 
-        e.target.classList.remove('on')
+        level = this.isTimeLimit ? this.$store.state.gameSet.limitClear.length + 1 : this.$store.state.gameSet.noLimitClear.length + 1
 
+        params = {
+          isTimeLimit: this.isTimeLimit,
+          level: level,
+        }
+        this.$emit("push-page", {
+          ...playPage,
+          onsNavigatorProps: params
+        });
+      }
+    },
+    goClose(e, title){
+      if(e.type === 'tap' || e.type === 'pressup' || e.type === 'panstart'){
         setTimeout(() => {
-          e.target.classList.add('on')
-          this.previousDom.classList.add('on')
-        }, 500)
+          this.isModalOn = false;
+        }, 100)
+        setTimeout(() => {
+          this.clearVisible = false;
+        }, 400)
       }
     },
-    setBoard(){
-      let clientWidth = document.body.clientWidth - 40;
-      this.pWidth = this.pHeight = clientWidth / this.row;
-      this.boardHeight = clientWidth;
-
-      let len = this.row * this.row / 2;
-      
-      let temp = [];
-      for (let i = 0; i < len; i++) {
-        let item = {};
-        item.id = i;
-        item.style = `width: ${this.pWidth}px; height: ${this.pHeight}px; background: url(${require(`../assets/img/piece/${i}.png`)}); background-size:cover;`;
-        temp.push(item);
+    isClear(){
+      for(const item of this.realBoardItems){
+        if(item.open === false){
+          return false;
+        }
       }
-      temp = temp.concat(temp);
-      this.realBoardItems = this.shuffle(temp);
+      setTimeout(() => {
+        this.clearVisible = true;
+      }, 10)
+      setTimeout(() => {
+        this.isModalOn = true;
+      }, 200)
     },
-    
-    shuffle(a) {
-      for (let i = a.length - 1; i > 0; i--) {
-        const j = Math.floor(Math.random() * (i + 1));
-        [a[i], a[j]] = [a[j], a[i]];
-      }
-      return a;
-    }
   }
 }
 </script>

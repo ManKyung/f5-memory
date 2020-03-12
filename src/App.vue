@@ -8,7 +8,6 @@
       @pop-page="popStack"
       @main-page="mainStack"
       @deviceBackButton="deviceBack"
-      v-hammer:tap="init"
     ></v-ons-navigator>
 
     <v-ons-modal :visible="closeVisible" @click="closeVisible = false">
@@ -40,11 +39,13 @@
 
 <script>
 import MainPage from "@/views/Main";
-import { initAd, removeBanner } from "@/assets/js/admob.js";
+// import PlayPage from "@/views/Play";
+import { initAd, showInterstitial } from "@/assets/js/admob.js";
 export default {
   name: "app",
   data() {
     return {
+      // pageStack: [PlayPage],
       pageStack: [MainPage],
       closeVisible: false,
       isModalOn: false,
@@ -58,8 +59,8 @@ export default {
       }
     });
 
-    // this.$store.commit('gameSet/setState'); // Stage 로딩
-    // this.$store.commit('gameSet/setGameInit');
+    this.$store.commit('gameSet/setStage'); // Stage 로딩
+    this.$store.commit('gameSet/setGameInit');
   },
   mounted() {
     setTimeout(() => {
@@ -80,30 +81,21 @@ export default {
             this.closeVisible = false;
           }, 400)
         } else if(title === "No") {
+          showInterstitial();
           navigator.app.exitApp();
         } else if(title === "OK") {
-          location.href = "https://play.google.com/store/apps/details?id=com.f5game.jigsaw";
+          location.href = "https://play.google.com/store/apps/details?id=com.f5game.memory";
         }
       }
-    },
-    init(){
-      // if(this.$store.state.gameSet.isSound){
-      //   this.$store.commit('gameSet/setSound', true);
-      // }
-      // if(this.$store.state.gameSet.isBackgroundMusic){
-      //   this.$store.commit('gameSet/setBackgroundMusic', true);
-      // }
     },
     pushStack(e){
       this.pageStack.push(e)
     },
     popStack(e){
       this.pageStack.pop();
-      removeBanner();
     },
     mainStack(){
       this.pageStack = [MainPage];
-      removeBanner();
     },
     deviceBack(e){
       if(this.pageStack.length === 1){
@@ -114,10 +106,6 @@ export default {
         setTimeout(() => {
           this.closeVisible = true;
         }, 400)
-      } else {
-        setTimeout(() => {
-          removeBanner();
-        }, 500)
       }
     }
   }
