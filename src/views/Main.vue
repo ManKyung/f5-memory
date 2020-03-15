@@ -5,7 +5,7 @@
     <div class="background" :style="`background:url(${backgroundImage});height:100%;`"></div>
     <div class="content">
       <div class="content-wrap" :style="`background:url(${logoImage});height:100%; background-size:contain; background-repeat:repeat`">
-        <v-ons-card class="text-center pa-5" style="border:2px solid #333; width:80%; background: #f7cff7">
+        <v-ons-card class="text-center pa-5" style="border:2px solid #333; width:80%; background: #f7cff7; max-width: 400px;">
           <div class="pt-7 pb-8"><strong class="fs-24">GAME MODE</strong></div>
           
           <ons-list-item>

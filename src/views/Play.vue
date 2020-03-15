@@ -47,12 +47,13 @@
         </div>
       </div>
     </div>
+    
     <v-ons-modal :visible="startVisible">
       <div class="clear-modal-wrap w-100 on">
         <div class="fs-48">
-          <div class="mb-3 fs-24">LEVEL {{gameLevel}}</div>
-          {{goTime === 0 ? 'START' : goTime}}
-          <div class=" fs-20 pt-4">Preview : <strong class="reverse--text">{{previewTime}}s</strong></div>
+          <div class="mb-3 fs-24 slide-in-bck-center">LEVEL {{gameLevel}}</div>
+          <div class="slide-in-bck-center2">{{goText}}</div>
+          <div class=" fs-20 pt-4 slide-in-bck-center">Preview : <strong class="reverse--text">{{previewTime}}s</strong></div>
         </div>
       </div>
     </v-ons-modal>
@@ -172,12 +173,11 @@ export default {
       optionVisible: false,
       time: this.previewTime,
       setPreviewTime: null,
-      setGoTime: null,
       gameParams: {},
       row: 0,
       total: 0,
+      goText: '',
       previewTime: 0,
-      goTime: 0,
       gameLevel: this.level,
       timeLimit: 0,
       interstitialEvent: ['LOAD_FAIL', 'CLOSE', 'EXIT_APP']
@@ -204,13 +204,12 @@ export default {
   },
   methods: {
     setEventListener(){
-      this.goTime = 5;
+      this.goText = 'READY';
       this.gameLevel += 1;
       prepareInterstitial();
     },
     setGameInit() {
       this.realBoardItems = [];
-      this.goTime = 5;
       if(this.gameLevel > 100) {
         this.gameLevel = this.gameLevel % 100;
       }
@@ -223,12 +222,13 @@ export default {
 
       this.startVisible = true;
 
-      this.setGoTime = setInterval(() => {
-        this.goTime -= 1;
-        if (this.goTime === -1) {
-          this.goStart(null, true);
-        }
-      }, 1000);
+      this.goText = 'READY';
+      setTimeout(() => {
+        this.goText = 'GO';
+      }, 1600)
+      setTimeout(() => {
+        this.goStart();
+      }, 3200)
     },
     goOption(e, title){
       if (e.type === "tap" || e.type === "pressup" || e.type === "panstart") {
@@ -297,22 +297,10 @@ export default {
         }, 1000);
       }, this.previewTime * 1000);
     },
-    goStart(e, flag = false) {
-      if (flag) {
-        this.startVisible = false;
-
-        this.setBoard();
-        this.setPreview();
-      } else if (
-        !flag &&
-        (e.type === "tap" || e.type === "pressup" || e.type === "panstart")
-      ) {
-        this.startVisible = false;
-
-        this.setBoard();
-        this.setPreview();
-      }
-      clearInterval(this.setGoTime);
+    goStart() {
+      this.startVisible = false;
+      this.setBoard();
+      this.setPreview();
     },
     goClose(e) {
       if (e.type === "tap" || e.type === "pressup" || e.type === "panstart") {
